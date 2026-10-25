@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#141418">
+<script src="config.js"></script>
 <script>(function(){var last=0,ok=function(e){return !!(e.target&&e.target.closest&&e.target.closest("#sim,#big,#mCs")&&!e.target.closest("input,textarea,select"))};
 document.addEventListener("touchend",function(e){var n=Date.now();if(n-last<400&&ok(e)&&e.cancelable)e.preventDefault();last=n},{passive:false});
 ["gesturestart","gesturechange","gestureend"].forEach(function(t){document.addEventListener(t,function(e){e.preventDefault()})});
@@ -87,8 +88,8 @@ h2 button{font-size:12px;padding:6px 10px;background:var(--card);border:1px soli
 #fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:70}
 .bill{position:absolute;top:-50px;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(115vh) rotate(var(--rot))}}
-#coll,#prof{position:fixed;inset:0;background:var(--bg);z-index:30;display:block;overflow:auto;padding-top:env(safe-area-inset-top,0px);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(26px);transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1),visibility 0s linear .6s}
-#coll.on,#prof.on{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1),visibility 0s}#coll .in,#prof .in{max-width:480px;margin:0 auto;padding:12px 16px 28px}
+#coll,#prof,#rate{position:fixed;inset:0;background:var(--bg);z-index:30;display:block;overflow:auto;padding-top:env(safe-area-inset-top,0px);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(26px);transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1),visibility 0s linear .6s}
+#coll.on,#prof.on,#rate.on{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1),visibility 0s}#coll .in,#prof .in,#rate .in{max-width:480px;margin:0 auto;padding:12px 16px 28px}
 .ch{display:flex;align-items:center;gap:8px}.ch h2{margin:0;flex:1;font-size:18px}.ch .ib{font-size:12px}
 .bigb{width:100%;margin-top:8px;background:var(--card);color:var(--tx);border:1px solid var(--line)}
 .idl{font-size:11px;color:var(--mut)}.item.exp{opacity:.55}
@@ -197,6 +198,7 @@ html,body{touch-action:pan-x pan-y;-webkit-touch-callout:none;-webkit-tap-highli
 body{-webkit-user-select:none;user-select:none}
 input,textarea{-webkit-user-select:text;user-select:text}
 .sim,#big{touch-action:none}
+#rate{z-index:31}.rk{display:flex;align-items:center;gap:10px;padding:11px 12px;margin-top:8px;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--line);border-radius:12px}.rk.me{border-left-color:var(--c4)}.rk .p{width:30px;text-align:center;font-weight:700;font-size:15px}.rk .a{font-size:22px}.rk .t{flex:1;min-width:0}.rk .t b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}.rk .t small{opacity:.6;font-size:11px}.rk .v{font-weight:700;font-size:13px;text-align:right}#rSt{font-size:12px;opacity:.7;margin:8px 2px 0}
 </style>
 </head>
 <body>
@@ -270,6 +272,10 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <h2 id="pAchT"></h2><div class="achg" id="pAch"></div>
 <h2>🏅 Топ игроков по балансу</h2><div id="pTop"></div>
 </div></div>
+<div id="rate"><div class="in">
+<div class="ch"><button class="ib" id="rBack">←</button><h2>🏅 Рейтинг игроков</h2><button class="ib" id="rRef" style="margin-left:auto">🔄</button></div>
+<div id="rSt"></div><div id="rList"></div>
+</div></div>
 <div class="modal" id="mSet"><div class="mc"><h3>⚙️ Настройки</h3>
 <label class="ck"><input type="checkbox" id="sSound"> 🔊 Звук</label>
 <label>Громкость</label><input type="range" id="sVol" min="0" max="100">
@@ -316,13 +322,14 @@ input,textarea{-webkit-user-select:text;user-select:text}
 </div>
 <div id="vCases" hidden></div>
 <div id="vMine" hidden></div>
+<button class="bigb" id="bRate">🏅 Рейтинг игроков</button>
 <button class="bigb" id="bColl">📚 Коллекция</button>
 <button class="bigb" id="bCode">🎁 Ввести код подарка</button>
 <button class="bigb" id="bExp">💾 Скопировать сохранение</button>
 <button class="bigb" id="bImp">📥 Загрузить сохранение</button>
 <button class="bigb" id="bAdm" style="border-style:dashed;display:none">🛡 Админ-панель (по коду)</button>
 <div style="text-align:center"><button class="reset" id="reset">Сбросить прогресс</button></div>
-<div class="note" id="nNote">Номера вымышленные, игра развлекательная. Тап по номеру в коллекции копирует его.<br><span style="opacity:.6">версия 8</span></div>
+<div class="note" id="nNote">Номера вымышленные, игра развлекательная. Тап по номеру в коллекции копирует его.<br><span style="opacity:.6">версия 10</span></div>
 </main>
 <div class="modal" id="mAsk"><div class="mc"><h3 id="askT"></h3><input type="text" id="askI" maxlength="40"><div class="row"><button id="askNo">Отмена</button><button id="askOk">ОК</button></div></div></div>
 <script>
@@ -614,7 +621,16 @@ try{b=new Uint8Array(await new Response(new Blob([js]).stream().pipeThrough(new 
 let bin="";for(let i=0;i<b.length;i+=8192)bin+=String.fromCharCode.apply(null,b.subarray(i,i+8192));return pre+btoa(bin)}
 async function unpackSave(c){c=c.trim();const pre=c.slice(0,4),b=Uint8Array.from(atob(c.slice(4)),x=>x.charCodeAt(0));let js;
 if(pre==="SGZ:")js=await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream("gzip"))).text();else if(pre==="SGR:")js=new TextDecoder().decode(b);else throw 0;return JSON.parse(js)}
+/* ---------- онлайн-рейтинг (Cloudflare Worker, адрес в config.js) ---------- */
+const NET_API=String(window.NET_API||"").replace(/\/+$/,"");
+let netPlayers=[],netT=0,netLast=0,netOk=null,netAt=0;
+const netOn=()=>!!(NET_API&&TGID&&window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData);
+function netPush(){if(!netOn()||netT)return;netT=setTimeout(()=>{netT=0;netSend()},Math.max(800,20000-(Date.now()-netLast)))}
+async function netSend(){if(!netOn())return;netLast=Date.now();try{await fetch(NET_API+"/score",{method:"POST",headers:{"content-type":"text/plain"},body:JSON.stringify({initData:Telegram.WebApp.initData,name:st.name,ava:st.ava,bal:st.bal,lvl:lvOf(st.xp)})})}catch(e){}}
+async function netTop(){if(!NET_API)return;try{const r=await fetch(NET_API+"/top"),j=await r.json();if(Array.isArray(j)){netPlayers=j;netOk=true;netAt=Date.now();if($("prof").classList.contains("on"))drawProf();if($("rate").classList.contains("on"))drawRate()}else throw 0}catch(e){netOk=false;if($("rate").classList.contains("on"))drawRate()}}
+setTimeout(()=>{netPush();netTop()},2500);
 function cloud(){
+netPush();
 if(!ready||!DB)return;clearTimeout(cloudT);
 cloudT=setTimeout(async()=>{try{
 await DB.doc("players/"+UID).set({pid:st.pid,name:st.name,ava:st.ava,bal:Math.round(st.bal),adm:!!st.adm,lvl:lvOf(st.xp),ac:Object.keys(st.ach).length,ts:Date.now()});
@@ -778,12 +794,30 @@ $("pAch").innerHTML=ACH.map(a=>{const ok=st.ach[a[0]];return `<div class="ach${o
 const A=$("pAvs");A.innerHTML="";
 AV.forEach(e=>{const b=document.createElement("button");b.className="f"+(st.ava===e?" on":"");b.textContent=e;b.onclick=()=>{st.ava=e;snd.tap(1);save();upd();drawProf()};A.appendChild(b)});
 const me={name:st.name,ava:st.ava,bal:st.bal,adm:st.adm},L=$("pTop");L.innerHTML="";
-[me,...players.filter(p=>p.uid!==UID)].sort((a,b)=>(b.bal||0)-(a.bal||0)).slice(0,10).forEach((p,i)=>{
+[me,...players.filter(p=>p.uid!==UID),...netPlayers.filter(p=>String(p.id)!==String(TGID))].sort((a,b)=>(b.bal||0)-(a.bal||0)).slice(0,20).forEach((p,i)=>{
 const d=document.createElement("div");d.className="item";d.style.borderLeftColor=p===me?"var(--c4)":"var(--line)";
 d.innerHTML='<div class="n"></div><span class="v"></span>';
 d.children[0].textContent=(i+1)+". "+(p.ava||"")+" "+(!p.adm&&nkey(p.name||"")==="админ"?"Игрок":p.name);if(p.adm)d.children[0].insertAdjacentHTML("beforeend",BADGE);d.children[1].textContent=sh(p.bal||0);L.appendChild(d)});
 }
-const openProf=()=>{drawProf();$("prof").classList.add("on")};
+function drawRate(){
+const me={name:st.name,ava:st.ava,bal:st.bal,adm:st.adm,lvl:lvOf(st.xp),me:1};
+const all=[me,...players.filter(p=>p.uid!==UID),...netPlayers.filter(p=>String(p.id)!==String(TGID))].sort((a,b)=>(b.bal||0)-(a.bal||0));
+const my=all.indexOf(me)+1,S=$("rSt"),L=$("rList");
+S.textContent=!NET_API?"Онлайн-рейтинг пока не подключён — показаны игроки только с этого устройства.":netOk===false?"Не удалось загрузить рейтинг. Нажмите 🔄. Показаны известные игроки.":netOk===null?"Загрузка…":(netOn()?"":"Откройте игру через Telegram, чтобы попасть в рейтинг. ")+"Ваше место: "+my+" из "+all.length;
+L.innerHTML="";
+all.slice(0,50).forEach((p,i)=>{
+const d=document.createElement("div");d.className="rk"+(p.me?" me":"");
+d.innerHTML='<div class="p"></div><div class="a"></div><div class="t"><b></b><small></small></div><div class="v"></div>';
+d.children[0].textContent=["🥇","🥈","🥉"][i]||(i+1);
+d.children[1].textContent=p.ava||"👤";
+const b=d.children[2].children[0];b.textContent=(!p.adm&&nkey(p.name||"")==="админ"?"Игрок":p.name)+(p.me?" (вы)":"");if(p.adm)b.insertAdjacentHTML("beforeend",BADGE);
+d.children[2].children[1].textContent=p.lvl?"Ур. "+p.lvl:"";
+d.children[3].textContent=sh(p.bal||0);L.appendChild(d)});
+if(my>50){const d=document.createElement("div");d.className="rk me";d.innerHTML='<div class="p"></div><div class="a"></div><div class="t"><b></b></div><div class="v"></div>';d.children[0].textContent=my;d.children[1].textContent=st.ava;d.children[2].children[0].textContent=st.name+" (вы)";d.children[3].textContent=sh(st.bal);L.appendChild(d)}
+}
+const openRate=()=>{drawRate();$("rate").classList.add("on");netPush();netTop()};
+$("bRate").onclick=openRate;$("rBack").onclick=()=>$("rate").classList.remove("on");$("rRef").onclick=()=>{netOk=null;drawRate();netTop()};
+const openProf=()=>{drawProf();$("prof").classList.add("on");netTop()};
 $("ava").onclick=openProf;$("piC").onclick=openProf;$("pBack").onclick=()=>$("prof").classList.remove("on");
 $("pNick").onclick=async()=>{if(st.adm){toast("Ник Админа закреплён");return}const n=await ask("Новый ник (3–16 символов, уникальный)",st.name);if(n&&n.trim()&&n.trim()!==st.name)await setNick(n)};
 /* ---------- настройки ---------- */
