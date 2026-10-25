@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#141418">
 <script src="config.js"></script>
-<script>(function(){var last=0,ok=function(e){return !!(e.target&&e.target.closest&&e.target.closest("#sim,#big,#mCs")&&!e.target.closest("input,textarea,select"))};
+<script>(function(){var last=0,ok=function(e){return !!(e.target&&e.target.closest&&e.target.closest("#sim,#big,#mCs")&&!e.target.closest("input,textarea,select,button,a,label"))};
 document.addEventListener("touchend",function(e){var n=Date.now();if(n-last<400&&ok(e)&&e.cancelable)e.preventDefault();last=n},{passive:false});
 ["gesturestart","gesturechange","gestureend"].forEach(function(t){document.addEventListener(t,function(e){e.preventDefault()})});
 document.addEventListener("dblclick",function(e){e.preventDefault()});
-document.addEventListener("touchstart",function(e){var t=e.target;if(t&&t.closest&&t.closest("#sim,#big")&&e.cancelable)e.preventDefault()},{passive:false});
+document.addEventListener("touchstart",function(e){var t=e.target;if(t&&t.closest&&t.closest("#sim,#big")&&!t.closest("button,a,input,select,label")&&e.cancelable)e.preventDefault()},{passive:false});
 (function(){var v=window.visualViewport,m=document.querySelector('meta[name=viewport]');if(!v||!m)return;var base=m.content;
 function fix(){if(v.scale>1.01){m.content=base+",minimum-scale=1";setTimeout(function(){m.content=base},80)}}
 v.addEventListener("resize",fix);v.addEventListener("scroll",fix)})();
@@ -329,7 +329,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <button class="bigb" id="bImp">📥 Загрузить сохранение</button>
 <button class="bigb" id="bAdm" style="border-style:dashed;display:none">🛡 Админ-панель (по коду)</button>
 <div style="text-align:center"><button class="reset" id="reset">Сбросить прогресс</button></div>
-<div class="note" id="nNote">Номера вымышленные, игра развлекательная. Тап по номеру в коллекции копирует его.<br><span style="opacity:.6">версия 10</span></div>
+<div class="note" id="nNote">Номера вымышленные, игра развлекательная. Тап по номеру в коллекции копирует его.<br><span style="opacity:.6">версия 11</span></div>
 </main>
 <div class="modal" id="mAsk"><div class="mc"><h3 id="askT"></h3><input type="text" id="askI" maxlength="40"><div class="row"><button id="askNo">Отмена</button><button id="askOk">ОК</button></div></div></div>
 <script>
