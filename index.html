@@ -8,6 +8,10 @@
 document.addEventListener("touchend",function(e){var n=Date.now();if(n-last<400&&ok(e)&&e.cancelable)e.preventDefault();last=n},{passive:false});
 ["gesturestart","gesturechange","gestureend"].forEach(function(t){document.addEventListener(t,function(e){e.preventDefault()})});
 document.addEventListener("dblclick",function(e){e.preventDefault()});
+document.addEventListener("touchstart",function(e){var t=e.target;if(t&&t.closest&&t.closest("#sim,#big")&&e.cancelable)e.preventDefault()},{passive:false});
+(function(){var v=window.visualViewport,m=document.querySelector('meta[name=viewport]');if(!v||!m)return;var base=m.content;
+function fix(){if(v.scale>1.01){m.content=base+",minimum-scale=1";setTimeout(function(){m.content=base},80)}}
+v.addEventListener("resize",fix);v.addEventListener("scroll",fix)})();
 document.addEventListener("touchmove",function(e){if(e.touches&&e.touches.length>1&&e.cancelable)e.preventDefault()},{passive:false});})();</script>
 <script>
 window.addEventListener("error",function(e){try{var d=document.createElement("pre");d.style.cssText="position:fixed;z-index:99999;left:0;right:0;top:0;margin:0;padding:8px;background:#400;color:#fff;font:12px monospace;white-space:pre-wrap";d.textContent="Ошибка: "+e.message+" (строка "+e.lineno+")";document.documentElement.appendChild(d)}catch(x){}});
@@ -189,9 +193,10 @@ h2 button{font-size:12px;padding:6px 10px;background:var(--card);border:1px soli
 #big .chip{margin-bottom:8px}
 .sch{border:1px dashed var(--line);border-radius:14px;padding:2px 12px 12px;margin-top:10px}
 .sch .note{margin-top:6px}
-html,body{touch-action:manipulation;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;overscroll-behavior:none}
+html,body{touch-action:pan-x pan-y;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;overscroll-behavior:none}
 body{-webkit-user-select:none;user-select:none}
 input,textarea{-webkit-user-select:text;user-select:text}
+.sim,#big{touch-action:none}
 </style>
 </head>
 <body>
@@ -317,7 +322,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <button class="bigb" id="bImp">📥 Загрузить сохранение</button>
 <button class="bigb" id="bAdm" style="border-style:dashed;display:none">🛡 Админ-панель (по коду)</button>
 <div style="text-align:center"><button class="reset" id="reset">Сбросить прогресс</button></div>
-<div class="note" id="nNote">Номера вымышленные, игра развлекательная. Тап по номеру в коллекции копирует его.</div>
+<div class="note" id="nNote">Номера вымышленные, игра развлекательная. Тап по номеру в коллекции копирует его.<br><span style="opacity:.6">версия 8</span></div>
 </main>
 <div class="modal" id="mAsk"><div class="mc"><h3 id="askT"></h3><input type="text" id="askI" maxlength="40"><div class="row"><button id="askNo">Отмена</button><button id="askOk">ОК</button></div></div></div>
 <script>
