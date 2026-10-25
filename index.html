@@ -2,8 +2,13 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#141418">
+<script>(function(){var last=0,ok=function(e){return !!(e.target&&e.target.closest&&e.target.closest("#sim,#big,#mCs")&&!e.target.closest("input,textarea,select"))};
+document.addEventListener("touchend",function(e){var n=Date.now();if(n-last<400&&ok(e)&&e.cancelable)e.preventDefault();last=n},{passive:false});
+["gesturestart","gesturechange","gestureend"].forEach(function(t){document.addEventListener(t,function(e){e.preventDefault()})});
+document.addEventListener("dblclick",function(e){e.preventDefault()});
+document.addEventListener("touchmove",function(e){if(e.touches&&e.touches.length>1&&e.cancelable)e.preventDefault()},{passive:false});})();</script>
 <script>
 window.addEventListener("error",function(e){try{var d=document.createElement("pre");d.style.cssText="position:fixed;z-index:99999;left:0;right:0;top:0;margin:0;padding:8px;background:#400;color:#fff;font:12px monospace;white-space:pre-wrap";d.textContent="Ошибка: "+e.message+" (строка "+e.lineno+")";document.documentElement.appendChild(d)}catch(x){}});
 (function(){var s=document.createElement("script");s.async=true;s.src="https://telegram.org/js/telegram-web-app.js";s.onload=function(){try{var w=Telegram.WebApp;w.ready();w.expand();if(w.disableVerticalSwipes)w.disableVerticalSwipes();if(w.setHeaderColor)w.setHeaderColor("#141418");if(w.setBackgroundColor)w.setBackgroundColor("#141418")}catch(e){}};document.head.appendChild(s)})();
@@ -184,6 +189,9 @@ h2 button{font-size:12px;padding:6px 10px;background:var(--card);border:1px soli
 #big .chip{margin-bottom:8px}
 .sch{border:1px dashed var(--line);border-radius:14px;padding:2px 12px 12px;margin-top:10px}
 .sch .note{margin-top:6px}
+html,body{touch-action:manipulation;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;overscroll-behavior:none}
+body{-webkit-user-select:none;user-select:none}
+input,textarea{-webkit-user-select:text;user-select:text}
 </style>
 </head>
 <body>
@@ -339,15 +347,18 @@ const $=id=>document.getElementById(id);
 /* ---------- звук ---------- */
 let AC=null,MG=null,RV=null,NB=null;
 const mkIR=(a,sec,dec)=>{const n=Math.floor(a.sampleRate*sec),b=a.createBuffer(2,n,a.sampleRate);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,dec)}return b};
-function ac(){
-if(!st.set.sound)return null;
-if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();
+function initAudio(ctx){
+AC=ctx;
 const cp=AC.createDynamicsCompressor();cp.threshold.value=-16;cp.knee.value=24;cp.ratio.value=5;cp.attack.value=.004;cp.release.value=.25;
 MG=AC.createGain();MG.gain.value=st.set.vol/100;MG.connect(cp);cp.connect(AC.destination);
 RV=AC.createConvolver();RV.buffer=mkIR(AC,2.2,2.8);const rg=AC.createGain();rg.gain.value=.5;RV.connect(rg);rg.connect(MG);
 NB=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate);const nd=NB.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
-}catch(e){AC=null;return null}}
-if(AC.state==="suspended")AC.resume();return AC;
+}
+function ac(){
+if(!st.set.sound)return null;
+if(!AC){try{initAudio(new(window.AudioContext||window.webkitAudioContext)())}catch(e){AC=null;return null}}
+if(AC.state==="suspended"&&AC.resume){try{const p=AC.resume();p&&p.catch&&p.catch(()=>{})}catch(e){}}
+return AC;
 }
 /* нота: type, v, at, f2 (глайд), atk, lp/lp2 (фильтр), det (супер-пила), rev (реверб), swell (нарастание) */
 function note(f,d,o){
@@ -386,6 +397,60 @@ tick:k=>note(pent(Math.min(30,Math.floor(k*26))),.12,{type:"triangle",v:.05,atk:
 ct:p=>{const f=pent(5+Math.floor(p*12));note(f,.16,{type:"sine",v:.07,atk:.002,lp:3200,rev:.2});note(f*2,.08,{type:"triangle",v:.025,atk:.001,lp:5000});nz(.012,{type:"highpass",f:6000,v:.02,atk:.001})},
 cl:()=>{note(1700+rnd(300),.03,{type:"square",v:.03,atk:.001,lp:4000});nz(.02,{type:"highpass",f:4000,v:.035,atk:.001})},
 ping:()=>bell(2000+rnd(1800),.4,.035,0,.7),
+/* ===== звуки контейнеров: мягкие, «игрушечные» (калимба, шкатулка, колокольчики, пэды) ===== */
+cStart:()=>{
+note(260,.16,{type:"sine",v:.2,atk:.004,f2:520,lp:2400});
+[523,659,784,1047].forEach((f,i)=>note(f,.45,{type:"sine",v:.07,atk:.004,at:.07+i*.055,rev:.45,lp:3200}));
+},
+cTick:p=>{
+const now=performance.now();if(snd._tl&&now-snd._tl<48)return;snd._tl=now;
+const f=pent(3+Math.min(13,Math.floor(p*14))),v=.32+.1*p;
+note(f,.34,{type:"sine",v:v,atk:.004,rev:.35,lp:3500});
+note(f*3.01,.07,{type:"sine",v:v*.16,atk:.002,lp:4200});
+},
+cStop:()=>{
+note(330,.2,{type:"sine",v:.42,atk:.004,f2:196,lp:2200});
+note(660,.5,{type:"sine",v:.1,atk:.006,at:.03,rev:.5,lp:3000});
+},
+cWin:t=>{
+const T=.2,
+kal=(f,at,v,d)=>{note(f,d||.7,{type:"sine",v:v,atk:.004,at:T+at,rev:.4,lp:3600});note(f*3.01,.1,{type:"sine",v:v*.14,atk:.002,at:T+at,lp:4200});note(f*2,(d||.7)*.5,{type:"sine",v:v*.2,atk:.004,at:T+at,rev:.35,lp:3600})},
+chime=(f,at,v,d)=>{note(f,d||1.2,{type:"sine",v:v,atk:.005,at:T+at,rev:.6,lp:4200});note(f*2,(d||1.2)*.6,{type:"sine",v:v*.28,atk:.005,at:T+at,rev:.6,lp:4200});note(f*3,(d||1.2)*.3,{type:"sine",v:v*.09,atk:.005,at:T+at,rev:.5,lp:4200})},
+pad=(fs,at,d,v)=>fs.forEach(f=>note(f,d,{type:"triangle",v:v||.05,det:5,atk:d*.3,at:T+at,rev:.55,lp:1500,lp2:700})),
+harp=(f,at,v)=>note(f,1.1,{type:"triangle",v:v||.08,atk:.004,at:T+at,rev:.5,lp:2600,lp2:700}),
+bloop=(f,f2,at,v)=>note(f,.14,{type:"sine",v:v,atk:.004,f2:f2,at:T+at,lp:2600}),
+spark=(n,from,span,v)=>{for(let i=0;i<n;i++)chime(pent(10+rnd(5)),from+Math.random()*span,v||.035,.9)};
+if(t===0){
+kal(784,0,.14,.6);kal(659,.14,.12,.7);
+return}
+if(t===1){
+[523,659,784,1047].forEach((f,i)=>kal(f,i*.09,.14,.8));
+chime(2093,.4,.05,1);
+return}
+if(t===2){
+bloop(330,660,0,.14);
+[523,659,784,1047,1319,1568].forEach((f,i)=>kal(f,.08+i*.075,.13,.9));
+pad([262,330,392,523],.2,1.6,.05);
+chime(2093,.6,.06,1.3);chime(2637,.68,.05,1.3);
+spark(5,.5,.8);
+return}
+if(t===3){
+bloop(220,520,0,.18);
+[392,494,587,784,988,1175,1568].forEach((f,i)=>harp(f,.1+i*.08,.085));
+pad([196,262,330,392,523],.3,2.4,.055);
+[784,1047,1319,1568,2093].forEach((f,i)=>chime(f,.75+i*.09,.07,1.6));
+note(98,1.4,{type:"sine",v:.2,atk:.12,at:T+.25,f2:82});
+spark(12,.6,1.6,.04);
+return}
+bloop(196,520,0,.2);
+[262,330,392,523,659,784,988,1175,1319,1568,1976,2349].forEach((f,i)=>harp(f,.08+i*.06,.085));
+[523,659,784,1047,784,1047,1319,1568].forEach((f,i)=>kal(f,.85+i*.1,.12,1));
+pad([131,196,262,330,392,523],.7,3.6,.06);
+note(65,3,{type:"sine",v:.26,atk:.18,at:T+.6,f2:55});
+[196,294,392,588,784].forEach(f=>note(f,4,{type:"sine",v:.05,det:5,atk:.8,at:T+.8,rev:.75}));
+[1047,1319,1568,2093,2637,3136].forEach((f,i)=>chime(f,1.7+i*.12,.07,2.2));
+spark(24,1.2,3,.04);
+},
 coin:()=>{bell(1760,.55,.06,0,.35);bell(2349,.75,.05,.07,.4);nz(.05,{type:"highpass",f:6000,v:.04})},
 err:()=>{note(190,.2,{type:"sawtooth",v:.12,lp:700,f2:140});note(150,.28,{type:"sawtooth",v:.12,lp:600,at:.12,f2:100})},
 claim:()=>[523,659,784,1046,1318].forEach((f,i)=>bell(f,.8,.075,i*.085,.5)),
@@ -1081,9 +1146,9 @@ $("csRes").hidden=true;$("mCs").classList.remove("res");$("mCs").classList.add("
 const wd=$("csWin").clientWidth,tx=-(ix*W+W/2-wd/2+(Math.random()-.5)*W*.6),dur=calm?900:5200;
 void S.offsetWidth;
 requestAnimationFrame(()=>{S.style.transition=`transform ${dur}ms cubic-bezier(.08,.6,.12,1)`;S.style.transform=`translateX(${tx}px)`});
-snd.rise(2,dur);vib(30);cancelAnimationFrame(csTk);let li=-1,hotEl=null,done=false;
+snd.cStart();vib(30);cancelAnimationFrame(csTk);let li=-1,hotEl=null,done=false;
 const cw=$("csWin"),sk=$("csSkip");cw.classList.add("run");sk.classList.add("on");
-const tf=()=>{try{const x=-new DOMMatrix(getComputedStyle(S).transform).m41,ii=Math.floor((x+wd/2)/W);if(ii!==li){if(li>=0){snd.ct(Math.min(1,x/-tx))}li=ii;if(hotEl)hotEl.classList.remove("hot");hotEl=S.children[ii]||null;if(hotEl)hotEl.classList.add("hot")}}catch(e){}csTk=requestAnimationFrame(tf)};csTk=requestAnimationFrame(tf);
+const tf=()=>{try{const x=-new DOMMatrix(getComputedStyle(S).transform).m41,ii=Math.floor((x+wd/2)/W);if(ii!==li){if(li>=0){snd.cTick(Math.min(1,x/-tx))}li=ii;if(hotEl)hotEl.classList.remove("hot");hotEl=S.children[ii]||null;if(hotEl)hotEl.classList.add("hot")}}catch(e){}csTk=requestAnimationFrame(tf)};csTk=requestAnimationFrame(tf);
 const finish=skip=>{
 if(done)return;done=true;clearTimeout(csT);cancelAnimationFrame(csTk);
 if(skip){S.style.transition="none";S.style.transform=`translateX(${tx}px)`;riseStop()}
@@ -1095,7 +1160,7 @@ $("csPr").style.color=`var(--p${t})`;
 $("csDiff").textContent=d>=0?"Выигрыш +"+sh(d):"Минус "+sh(-d);$("csDiff").style.color=d>=0?"var(--ok)":"#e5383b";
 const sl=$("csSell");sl.disabled=false;sl.textContent="Продать +"+sh(p.v);
 $("csAgain").textContent="Ещё раз · "+rub(c.cost);$("csRes").className="t"+t;$("csRes").hidden=false;$("mCs").classList.add("res");
-snd.reveal(t);if(t>=2)fx(t);if(t>=3)toast("🔥 Огонь! "+pname(p)+" — "+sh(p.v));vib(t>=3?[100,50,150,50,300]:[60]);
+snd.cStop();snd.cWin(t);if(t>=2)fx(t);if(t>=3)toast("🔥 Огонь! "+pname(p)+" — "+sh(p.v));vib(t>=3?[100,50,150,50,300]:[60]);
 };
 csSkipFn=()=>finish(true);
 clearTimeout(csT);csT=setTimeout(()=>finish(false),dur+200);
