@@ -101,7 +101,15 @@ h2 button{font-size:12px;padding:6px 10px;background:var(--card);border:1px soli
 .ah{display:flex;justify-content:space-between;align-items:center;gap:8px}.ah h3{margin:0}.ah b{color:var(--ok);font-size:14px}
 .tg{display:grid;grid-template-columns:1.2fr 1fr;gap:8px}
 .tabs{display:flex;gap:4px;margin:12px 0 4px}.tabs button{flex:1;padding:8px 4px;font-size:12px;white-space:nowrap;background:var(--bg);color:var(--tx);border:1px solid var(--line)}.tabs button.on{background:var(--btn);color:var(--btnt)}
-.two{display:grid;grid-template-columns:2fr 1fr;gap:8px}.tab[hidden]{display:none}
+.two{display:grid;grid-template-columns:2fr 1fr;gap:8px}
+.adm{width:calc(100vw - 32px);padding:10px 12px;height:94dvh;max-height:94dvh;overflow-x:hidden}.adm .g2>div,.adm .tg>div{min-width:0}.adm input[type=range]{width:100%;max-width:100%;margin:2px 0}.adm .body{overflow-x:hidden}.adm .tabs button{min-width:0}
+.adm .ah h3{font-size:16px}.adm label{margin:6px 0 2px;font-size:11px}
+.adm input[type=number],.adm input[type=text],.adm select{padding:6px 8px;font-size:14px;border-radius:8px}
+.adm .tg{gap:6px}.adm .tg label{margin:4px 0 2px}
+.adm .tabs{margin:6px 0 2px;gap:3px}.adm .tabs button{padding:6px 0;font-size:11px;overflow:hidden;border-radius:8px}
+.adm .row{flex-wrap:wrap;gap:5px;margin-top:5px}.adm .row button{flex:1 1 auto;padding:7px 8px;font-size:12px;border-radius:8px}
+.adm .note{margin:3px 0;font-size:11px}.adm .ck{margin:8px 0 0;font-size:13px}
+.adm .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.adm .sch{padding:8px}.adm .item{padding:8px}.tab[hidden]{display:none}
 .mc .ck{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--tx);margin:14px 0 0}
 .xr{width:100%;margin-top:10px;background:#e5383b;color:#fff;font-size:16px;padding:14px;flex:none}
 #prof{z-index:31}
@@ -214,7 +222,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <div class="modal" id="mAdm"><div class="mc adm">
 <div class="ah"><h3>⚙️ Админ-панель</h3><b id="aBal"></b></div>
 <div class="tg"><div><label>Кому</label><select id="aTo"></select></div><div><label>Сумма / ₽</label><input type="number" id="aAmt" value="10000" min="0"></div></div>
-<div class="tabs" id="aTabs"><button class="on" data-t="0">💰 Деньги</button><button data-t="1">📱 Номера</button><button data-t="2">🎮 Игра</button><button data-t="3">👥 Игроки</button></div>
+<div class="tabs" id="aTabs"><button class="on" data-t="0">💰 Деньги</button><button data-t="1">📱 Номера</button><button data-t="2">🎮 Игра</button><button data-t="3">👥 Игроки</button><button data-t="4">🎟 Промо</button></div>
 <div class="body">
 <div class="tab" id="t0">
 <label>Быстрая сумма</label>
@@ -236,25 +244,31 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <div class="row"><button id="nSpawn">✨ Создать и выдать</button></div>
 </div>
 <div class="tab" id="t2" hidden>
-<div class="sch"><label>🎯 Топ-номер: выпадет через N нажатий</label><input type="number" id="sN" value="10" min="1" max="100000">
-<label>Цена этого номера (без лимита: 5 трлн, 2.5млрд, 1e40…)</label><input type="text" id="sP" value="1 трлн" autocomplete="off">
+<div class="sch"><div class="g2"><div><label>🎯 Топ-номер через N нажатий</label><input type="number" id="sN" value="10" min="1" max="100000"></div><div><label>Цена (5 трлн, 1e40…)</label><input type="text" id="sP" value="1 трлн" autocomplete="off"></div></div>
 <div class="note" id="sPv" style="text-align:left"></div>
 <div class="row"><button data-sp="100 млрд">100 млрд</button><button data-sp="1 трлн">1 трлн</button><button data-sp="1 квадрлн">1 квадрлн</button><button data-sp="1 секстлн">1 секстлн</button><button data-sp="1e50">1e50</button></div>
 <label>Свой номер (7 цифр, пусто = 000-00-00)</label><input type="text" id="sS" inputmode="numeric" maxlength="7" placeholder="0000000">
 <div class="row"><button id="sGo">🎯 Запланировать</button><button id="sNo">✖ Отменить</button></div>
 <div class="note" id="sSt" style="text-align:left;color:var(--ok)"></div></div>
-<label>🍀 Удача контейнеров (iPhone): <b id="aCLV">0</b>%</label><input type="range" id="aCL" min="0" max="100" value="0">
+<div class="g2"><div><label>🍀 Удача контейнеров: <b id="aCLV">0</b>%</label><input type="range" id="aCL" min="0" max="100" value="0"></div><div><label>🍀 Удача номеров: <b id="aLuckV">0</b>%</label><input type="range" id="aLuck" min="0" max="100" value="0"></div></div>
 <div class="row"><button id="aCL0">0%</button><button id="aCL50">50%</button><button id="aCL100">🍀 MAX 100%</button></div>
-<label>Следующий контейнер выдаст</label><select id="aNC"></select>
-<label>Удача номеров: <b id="aLuckV">0</b>%</label><input type="range" id="aLuck" min="0" max="100" value="0">
-<label>Следующая крутка выпадет</label>
-<select id="aNext"><option value="">Как повезёт</option><option value="2">Редкий</option><option value="3">Эпический</option><option value="4">Легендарный</option><option value="jp">Джекпот 000-00-00</option></select>
+<div class="g2"><div><label>Следующий контейнер</label><select id="aNC"></select></div><div><label>Следующая крутка</label><select id="aNext"><option value="">Как повезёт</option><option value="2">Редкий</option><option value="3">Эпический</option><option value="4">Легендарный</option><option value="jp">Джекпот 000-00-00</option></select></div></div>
 <label class="ck"><input type="checkbox" id="aFree"> Бесплатные крутки (для меня)</label>
 <label>Опыт (для меня)</label>
 <div class="row"><button data-x="100">+100 XP</button><button data-x="1000">+1 000 XP</button><button data-x="10000">+10 000 XP</button></div>
-<div class="row"><button id="aDaily">🎁 Сбросить ежедневку</button><button id="aClear">🗑 Очистить мою коллекцию</button></div>
+<div class="row"><button id="aDaily">🎁 Сбросить ежедневку</button><button id="aClear">🗑 Очистить коллекцию</button></div>
 </div>
 <div class="tab" id="t3" hidden><div id="aPl"></div></div>
+<div class="tab" id="t4" hidden>
+<div class="note" style="text-align:left">Придумайте слово и закиньте в канал. Награда: деньги, номер или оба. Один человек вводит код один раз. Только в Telegram.</div>
+<div class="g2"><div><label>Код (латиницей)</label><input type="text" id="pCode" maxlength="20" autocapitalize="characters" autocomplete="off" placeholder="SIM500"></div><div><label>💰 Деньги (5 млн; 0 = нет)</label><input type="text" id="pAmt" value="1 млн" autocomplete="off"></div></div>
+<div class="note" id="pAmtV" style="text-align:left"></div>
+<div class="g2"><div><label>📱 Номер (7 цифр, можно пусто)</label><input type="text" id="pNum" inputmode="numeric" maxlength="7" placeholder="7777777" autocomplete="off"></div><div><label>Оператор</label><select id="pOp"><option value="mts">МТС</option><option value="bee">Билайн</option><option value="meg">МегаФон</option><option value="t2">Tele2</option><option value="yota">Yota</option></select></div></div>
+<div class="g2"><div><label>Всего активаций</label><input type="number" id="pMax" value="100" min="1" max="10000000"></div><div><label>Срок, дней (0 = без)</label><input type="number" id="pDays" value="0" min="0" max="3650"></div></div>
+<div class="row"><button id="pMake">🎟 Создать промокод</button><button id="pRef">🔄 Список</button></div>
+<div class="note" id="pSt" style="text-align:left"></div>
+<div id="pLst"></div>
+</div>
 </div>
 <button class="xr" id="aClose">✖ Закрыть</button>
 </div></div>
@@ -324,12 +338,12 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <div id="vMine" hidden></div>
 <button class="bigb" id="bRate">🏅 Рейтинг игроков</button>
 <button class="bigb" id="bColl">📚 Коллекция</button>
-<button class="bigb" id="bCode">🎁 Ввести код подарка</button>
+<button class="bigb" id="bCode">🎟 Промокод</button>
 <button class="bigb" id="bExp">💾 Скопировать сохранение</button>
 <button class="bigb" id="bImp">📥 Загрузить сохранение</button>
 <button class="bigb" id="bAdm" style="border-style:dashed;display:none">🛡 Админ-панель (по коду)</button>
 <div style="text-align:center"><button class="reset" id="reset">Сбросить прогресс</button></div>
-<div class="note" id="nNote">Номера вымышленные, игра развлекательная. Тап по номеру в коллекции копирует его.<br><span style="opacity:.6">версия 11</span></div>
+<div class="note" id="nNote">Номера вымышленные, игра развлекательная. Тап по номеру в коллекции копирует его.<br><span style="opacity:.6">версия 15</span></div>
 </main>
 <div class="modal" id="mAsk"><div class="mc"><h3 id="askT"></h3><input type="text" id="askI" maxlength="40"><div class="row"><button id="askNo">Отмена</button><button id="askOk">ОК</button></div></div></div>
 <script>
@@ -628,7 +642,19 @@ const netOn=()=>!!(NET_API&&TGID&&window.Telegram&&Telegram.WebApp&&Telegram.Web
 function netPush(){if(!netOn()||netT)return;netT=setTimeout(()=>{netT=0;netSend()},Math.max(800,20000-(Date.now()-netLast)))}
 async function netSend(){if(!netOn())return;netLast=Date.now();try{await fetch(NET_API+"/score",{method:"POST",headers:{"content-type":"text/plain"},body:JSON.stringify({initData:Telegram.WebApp.initData,name:st.name,ava:st.ava,bal:st.bal,lvl:lvOf(st.xp)})})}catch(e){}}
 async function netTop(){if(!NET_API)return;try{const r=await fetch(NET_API+"/top"),j=await r.json();if(Array.isArray(j)){netPlayers=j;netOk=true;netAt=Date.now();if($("prof").classList.contains("on"))drawProf();if($("rate").classList.contains("on"))drawRate()}else throw 0}catch(e){netOk=false;if($("rate").classList.contains("on"))drawRate()}}
-setTimeout(()=>{netPush();netTop()},2500);
+async function netCall(path,body){
+if(!netOn())return{ok:false,msg:"Откройте игру через бота @magakkv_sim_bot (кнопка «Играть»), а не по обычной ссылке"};
+try{const r=await fetch(NET_API+path,{method:"POST",headers:{"content-type":"text/plain"},body:JSON.stringify(Object.assign({initData:Telegram.WebApp.initData},body))});return await r.json()}catch(e){return{ok:false,msg:"Нет связи с сервером"}}
+}
+let gT=0;
+async function netGifts(){
+if(!netOn()||gT)return;gT=1;
+try{const r=await netCall("/gift/claim",{});
+if(r&&r.ok&&Array.isArray(r.gifts)&&r.gifts.length){let sum=0;r.gifts.forEach(g=>{if(g.amt>0){sum+=g.amt;apply({amt:g.amt})}});
+if(sum>0){snd.claim();save();upd();toast("🎁 Подарок от админа: "+rub(sum))}}}catch(e){}
+gT=0}
+setInterval(netGifts,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)netGifts()});
+setTimeout(()=>{netPush();netTop();netGifts()},2500);
 function cloud(){
 netPush();
 if(!ready||!DB)return;clearTimeout(cloudT);
@@ -895,7 +921,7 @@ fillTo();upd();$("mAdm").classList.add("on");
 };
 document.querySelectorAll("#aTabs button").forEach(b=>b.onclick=()=>{
 document.querySelectorAll("#aTabs button").forEach(x=>x.classList.toggle("on",x===b));
-for(let i=0;i<4;i++)$("t"+i).hidden=(i!==+b.dataset.t);
+for(let i=0;i<5;i++)$("t"+i).hidden=(i!==+b.dataset.t);if(+b.dataset.t===4)pList();
 });
 document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{$("aAmt").value=b.dataset.m});
 $("aAdd").onclick=()=>{const n=amt();n?send({amt:n}):toast("Введите сумму")};
@@ -903,6 +929,10 @@ $("aSub").onclick=()=>{const n=amt();n?send({amt:-n}):toast("Введите су
 $("aSet").onclick=()=>send({mode:"set",amt:amt()});
 $("aAll").onclick=async()=>{
 const n=amt();if(!n){toast("Введите сумму");return}
+if(netOn()){
+if(!(await ask("Выдать "+rub(n)+" ВСЕМ игрокам? Они получат при следующем входе.",null,"confirm")))return;
+const r=await netCall("/gift/all",{amt:n});
+if(r.ok){toast("🎁 Выдано всем: "+rub(n)+" ("+r.n+" игр.). Придёт при входе в игру");netGifts()}else toast(r.msg||"Ошибка");return}
 const ps=players.filter(p=>p.uid!==UID);
 apply({amt:n});save();upd();
 for(const p of ps)await send({amt:n},p.uid);
@@ -929,9 +959,12 @@ if(!(await ask("Заменить текущий прогресс сохране�
 Object.assign(st,o);st.daily=Object.assign({last:"",streak:0},o.daily);norm();persist();upd();toast("✅ Сохранение загружено")}catch(e){toast("Неверный код сохранения")}
 };
 $("bCode").onclick=async()=>{
-const c=((await ask("Код подарка",""))||"").trim();if(!c)return;
+const c=((await ask("Введите промокод",""))||"").trim();if(!c)return;
 const m=c.match(/^SG(\d+)-([0-9a-z]+)-([0-9a-z]+)-([0-9a-z]+)$/);
-if(!m){toast("Неверный код");return}
+if(!m){
+const r=await netCall("/promo/use",{code:c});
+if(r.ok&&(r.amt>0||r.snum)){const nums=r.snum&&OPS[r.op]?[pnum(r.snum,r.op)]:[];apply({amt:r.amt||0,nums});snd.claim();save();upd();fx(nums.length?3:2);toast("🎁 Получено: "+[r.amt>0?rub(r.amt):"",nums.length?"номер "+fmt(nums[0].p,nums[0].s):""].filter(Boolean).join(" + "))}else toast(r.msg||"Неверный промокод");
+return}
 const id=m[1],n=parseInt(m[2],36),nn=m[3];
 if(id!==st.pid){toast("Этот код выдан для другого ID");return}
 if(h53("gift|"+id+"."+n+"."+nn).toString(36)!==m[4]||!(n>0)){toast("Неверный код");return}
@@ -949,6 +982,27 @@ send({nums});
 };
 const UNITS={"тыс":1e3,"к":1e3,"k":1e3,"млн":1e6,"м":1e6,"m":1e6,"млрд":1e9,"b":1e9,"трлн":1e12,"т":1e12,"t":1e12,"квадрлн":1e15,"квинтлн":1e18,"секстлн":1e21,"септлн":1e24,"октлн":1e27,"нонлн":1e30,"децлн":1e33};
 function parseMoney(s){s=String(s||"").toLowerCase().replace(/\s+/g,"").replace(/,/g,".").replace(/₽|руб\w*|р\.?$/g,"");const m=s.match(/^(\d*\.?\d+(?:e[+-]?\d+)?)(.*)$/);if(!m)return NaN;let v=+m[1];if(m[2]){const u=UNITS[m[2]];if(!u)return NaN;v*=u}return v}
+const pPrev=()=>{const v=parseMoney($("pAmt").value);$("pAmtV").textContent=isFinite(v)&&v>0?"= "+sh(v):(v===0?"Без денег":"Введи сумму: 5 млн, 2.5млрд, 1e40")};
+$("pAmt").oninput=pPrev;pPrev();
+async function pList(){
+const r=await netCall("/promo/list",{}),L=$("pLst");L.innerHTML="";
+if(!r.ok){$("pSt").style.color="var(--mut)";$("pSt").textContent=r.msg||"Не удалось загрузить";return}
+$("pSt").textContent=r.list.length?"Промокоды ("+r.list.length+"):":"Промокодов пока нет";
+r.list.forEach(x=>{const d=document.createElement("div");d.className="item";d.innerHTML='<div class="n"></div><span class="v"></span>';
+d.children[0].textContent=x.code+" · "+[x.amt>0?sh(x.amt):"",x.snum?"📱"+x.snum:""].filter(Boolean).join(" + ")+" · "+x.used+"/"+x.max+(x.exp?" · до "+new Date(x.exp).toLocaleDateString("ru-RU"):"");
+const b=document.createElement("button");b.textContent="🗑";b.style.cssText="padding:6px 10px;margin-left:8px";
+b.onclick=async()=>{if(!(await ask("Удалить промокод "+x.code+"?",null,"confirm")))return;const q=await netCall("/promo/del",{code:x.code});toast(q.ok?"Удалено":(q.msg||"Ошибка"));pList()};
+d.children[1].appendChild(b);L.appendChild(d)})}
+$("pRef").onclick=pList;
+$("pMake").onclick=async()=>{
+const code=$("pCode").value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g,""),amt=$("pAmt").value.trim()===""?0:parseMoney($("pAmt").value),snum=$("pNum").value.trim(),max=Math.floor(+$("pMax").value||0),days=Math.max(0,Math.floor(+$("pDays").value||0));
+if(code.length<3){toast("Код: 3–20 латинских букв или цифр");return}
+if(!(isFinite(amt)&&amt>=0)){toast("Неверная сумма");return}
+if(snum&&!/^\d{7}$/.test(snum)){toast("Номер: ровно 7 цифр");return}
+if(!(amt>0)&&!snum){toast("Укажи деньги или номер");return}
+if(!(max>=1)){toast("Укажи, сколько человек");return}
+const r=await netCall("/promo/new",{code,amt,max,days,snum,op:$("pOp").value});
+if(r.ok){toast("🎟 Создан: "+r.code);$("pCode").value="";pList()}else toast(r.msg||"Ошибка")};
 const sPrev=()=>{const v=parseMoney($("sP").value);$("sPv").textContent=isFinite(v)&&v>0?"= "+sh(v):"Введи сумму: 5 трлн, 2.5млрд, 1e40"};
 $("sP").oninput=sPrev;sPrev();
 document.querySelectorAll("[data-sp]").forEach(b=>b.onclick=()=>{$("sP").value=b.dataset.sp;sPrev()});
